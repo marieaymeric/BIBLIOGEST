@@ -1,0 +1,32 @@
+/* style.css — BiblioGest
+   Quelques ajustements légers par-dessus Bootstrap pour une
+   interface simple, claire et épurée. */
+
+body {
+    background-color: #f4f6f9;
+}
+
+.page-login {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+}
+
+.navbar-brand {
+    letter-spacing: 0.5px;
+}
+
+.card {
+    border: none;
+    border-radius: 0.6rem;
+}
+
+.table thead th {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #6c757d;
+}
+
+footer {
+    border-top: 1px solid #e2e5e9;
+}

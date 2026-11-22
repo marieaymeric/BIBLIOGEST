@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block titre %}Pénalités — BiblioGest{% endblock %}
+
+{% block contenu %}
+<h2 class="mb-4"><i class="bi bi-exclamation-triangle"></i> Pénalités de retard</h2>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Emprunt</th>
+                    <th>Lecteur</th>
+                    <th>Jours de retard</th>
+                    <th>Montant</th>
+                    <th>Statut</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for penalite in penalites %}
+                <tr>
+                    <td><a href="{{ url_for('emprunt.details', emprunt_id=penalite.emprunt_id) }}">{{ penalite.emprunt.livre.titre }}</a></td>
+                    <td>{{ penalite.emprunt.lecteur.nom_complet }}</td>
+                    <td>{{ penalite.jours_de_retard }}</td>
+                    <td>{{ "%.2f"|format(penalite.montant) }}</td>
+                    <td>
+                        {% if penalite.statut_paiement == 'payee' %}
+                            <span class="badge bg-success">Payée</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Impayée</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        {% if penalite.statut_paiement != 'payee' %}
+                        <form method="POST" action="{{ url_for('emprunt.payer_penalite', penalite_id=penalite.id) }}">
+                            <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-cash-coin"></i> Marquer payée</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-4">Aucune pénalité enregistrée.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

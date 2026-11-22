@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block titre %}Livres — BiblioGest{% endblock %}
+
+{% block contenu %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2><i class="bi bi-journal-bookmark"></i> Catalogue des livres</h2>
+    <div>
+        <a href="{{ url_for('livre.liste_categories') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-tags"></i> Catégories
+        </a>
+        <a href="{{ url_for('livre.ajouter') }}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Ajouter un livre
+        </a>
+    </div>
+</div>
+
+<form method="GET" class="row g-2 mb-3">
+    <div class="col-md-5">
+        <input type="text" name="q" value="{{ recherche }}" class="form-control" placeholder="Rechercher par titre ou auteur...">
+    </div>
+    <div class="col-md-4">
+        <select name="categorie_id" class="form-select">
+            <option value="">Toutes les catégories</option>
+            {% for cat in categories %}
+                <option value="{{ cat.id }}" {% if categorie_id == cat.id %}selected{% endif %}>{{ cat.nom }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search"></i> Rechercher</button>
+    </div>
+</form>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Titre</th>
+                    <th>Auteur</th>
+                    <th>Catégorie</th>
+                    <th>Disponibilité</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for livre in livres %}
+                <tr>
+                    <td><a href="{{ url_for('livre.details', livre_id=livre.id) }}">{{ livre.titre }}</a></td>
+                    <td>{{ livre.auteur }}</td>
+                    <td>{{ livre.categorie.nom if livre.categorie else '—' }}</td>
+                    <td>
+                        {% if livre.disponible %}
+                            <span class="badge bg-success">{{ livre.nb_disponibles }} / {{ livre.nb_exemplaires }} disponible(s)</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Indisponible (0 / {{ livre.nb_exemplaires }})</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{{ url_for('livre.details', livre_id=livre.id) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a>
+                        <a href="{{ url_for('livre.modifier', livre_id=livre.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5" class="text-center text-muted py-4">Aucun livre trouvé.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block titre %}{{ 'Modifier' if livre else 'Ajouter' }} un livre — BiblioGest{% endblock %}
+
+{% block contenu %}
+<h2 class="mb-4">
+    <i class="bi bi-journal-plus"></i>
+    {{ 'Modifier le livre' if livre else 'Ajouter un livre' }}
+</h2>
+
+<div class="card shadow-sm" style="max-width: 700px;">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Titre *</label>
+                <input type="text" name="titre" class="form-control" required value="{{ livre.titre if livre else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Auteur *</label>
+                <input type="text" name="auteur" class="form-control" required value="{{ livre.auteur if livre else '' }}">
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">ISBN</label>
+                    <input type="text" name="isbn" class="form-control" value="{{ livre.isbn if livre and livre.isbn else '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Éditeur</label>
+                    <input type="text" name="editeur" class="form-control" value="{{ livre.editeur if livre and livre.editeur else '' }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Année de publication</label>
+                    <input type="number" name="annee_publication" class="form-control" value="{{ livre.annee_publication if livre and livre.annee_publication else '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Catégorie</label>
+                    <select name="categorie_id" class="form-select">
+                        <option value="">— Aucune —</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if livre and livre.categorie_id == cat.id %}selected{% endif %}>{{ cat.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Nombre d'exemplaires *</label>
+                <input type="number" min="1" name="nb_exemplaires" class="form-control" required value="{{ livre.nb_exemplaires if livre else 1 }}">
+                {% if livre %}
+                    <div class="form-text">Le nombre d'exemplaires disponibles sera ajusté automatiquement en fonction de la différence.</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Enregistrer</button>
+            <a href="{{ url_for('livre.liste') }}" class="btn btn-outline-secondary">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

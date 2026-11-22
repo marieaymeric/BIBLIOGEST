@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block titre %}{{ livre.titre }} — BiblioGest{% endblock %}
+
+{% block contenu %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2>{{ livre.titre }}</h2>
+        <p class="text-muted mb-0">par {{ livre.auteur }}</p>
+    </div>
+    <div>
+        <a href="{{ url_for('livre.modifier', livre_id=livre.id) }}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Modifier</a>
+        <form method="POST" action="{{ url_for('livre.supprimer', livre_id=livre.id) }}" class="d-inline" onsubmit="return confirm('Confirmer la suppression de ce livre ?');">
+            <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Supprimer</button>
+        </form>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">Informations</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>ISBN :</strong> {{ livre.isbn or '—' }}</li>
+                <li class="list-group-item"><strong>Éditeur :</strong> {{ livre.editeur or '—' }}</li>
+                <li class="list-group-item"><strong>Année :</strong> {{ livre.annee_publication or '—' }}</li>
+                <li class="list-group-item"><strong>Catégorie :</strong> {{ livre.categorie.nom if livre.categorie else '—' }}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">Disponibilité</div>
+            <div class="card-body text-center">
+                <h1 class="display-5 fw-bold {% if livre.disponible %}text-success{% else %}text-danger{% endif %}">
+                    {{ livre.nb_disponibles }} / {{ livre.nb_exemplaires }}
+                </h1>
+                <p class="text-muted">exemplaire(s) disponible(s)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-3">
+    <div class="card-header bg-white">Historique des emprunts</div>
+    <div class="table-responsive">
+        <table class="table mb-0">
+            <thead class="table-light">
+                <tr><th>Lecteur</th><th>Date d'emprunt</th><th>Date limite</th><th>Statut</th></tr>
+            </thead>
+            <tbody>
+            {% for emprunt in livre.emprunts|sort(attribute='date_emprunt', reverse=True) %}
+                <tr>
+                    <td>{{ emprunt.lecteur.nom_complet }}</td>
+                    <td>{{ emprunt.date_emprunt.strftime('%d/%m/%Y') }}</td>
+                    <td>{{ emprunt.date_limite.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        {% if emprunt.statut == 'retourne' %}<span class="badge bg-success">Rendu</span>
+                        {% elif emprunt.est_en_retard %}<span class="badge bg-danger">En retard</span>
+                        {% else %}<span class="badge bg-info text-dark">En cours</span>{% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="text-center text-muted py-3">Aucun emprunt pour ce livre.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

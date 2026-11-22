@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block titre %}Nouvel emprunt — BiblioGest{% endblock %}
+
+{% block contenu %}
+<h2 class="mb-4"><i class="bi bi-plus-circle"></i> Enregistrer un emprunt</h2>
+
+<div class="card shadow-sm" style="max-width: 700px;">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Livre *</label>
+                <select name="livre_id" class="form-select" required>
+                    <option value="" disabled selected>— Sélectionner un livre disponible —</option>
+                    {% for livre in livres %}
+                        <option value="{{ livre.id }}">{{ livre.titre }} ({{ livre.auteur }}) — {{ livre.nb_disponibles }} disponible(s)</option>
+                    {% endfor %}
+                </select>
+                {% if not livres %}
+                    <div class="form-text text-danger">Aucun livre n'est actuellement disponible.</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Lecteur *</label>
+                <select name="lecteur_id" class="form-select" required>
+                    <option value="" disabled selected>— Sélectionner un lecteur actif —</option>
+                    {% for lecteur in lecteurs %}
+                        <option value="{{ lecteur.id }}">{{ lecteur.nom_complet }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Durée de l'emprunt (jours) *</label>
+                <input type="number" name="duree_jours" min="1" class="form-control" value="{{ duree_defaut }}" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" {% if not livres %}disabled{% endif %}>
+                <i class="bi bi-check-lg"></i> Enregistrer l'emprunt
+            </button>
+            <a href="{{ url_for('emprunt.liste') }}" class="btn btn-outline-secondary">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

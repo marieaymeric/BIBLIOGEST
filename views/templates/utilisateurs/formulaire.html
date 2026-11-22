@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block titre %}{{ 'Modifier' if utilisateur else 'Ajouter' }} un utilisateur — BiblioGest{% endblock %}
+
+{% block contenu %}
+<h2 class="mb-4">
+    <i class="bi bi-person-gear"></i>
+    {{ 'Modifier l\'utilisateur' if utilisateur else 'Ajouter un utilisateur' }}
+</h2>
+
+<div class="card shadow-sm" style="max-width: 600px;">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Nom complet *</label>
+                <input type="text" name="nom" class="form-control" required value="{{ utilisateur.nom if utilisateur else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">E-mail *</label>
+                <input type="email" name="email" class="form-control" required value="{{ utilisateur.email if utilisateur else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Rôle *</label>
+                <select name="role" class="form-select" required>
+                    <option value="bibliothecaire" {% if utilisateur and utilisateur.role == 'bibliothecaire' %}selected{% endif %}>Bibliothécaire</option>
+                    <option value="administrateur" {% if utilisateur and utilisateur.role == 'administrateur' %}selected{% endif %}>Administrateur</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">{{ 'Nouveau mot de passe (laisser vide pour ne pas changer)' if utilisateur else 'Mot de passe *' }}</label>
+                <input type="password" name="mot_de_passe" class="form-control" {% if not utilisateur %}required{% endif %}>
+            </div>
+            {% if utilisateur %}
+            <div class="form-check mb-3">
+                <input type="checkbox" name="actif" class="form-check-input" id="actif" {% if utilisateur.actif %}checked{% endif %}>
+                <label class="form-check-label" for="actif">Compte actif</label>
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Enregistrer</button>
+            <a href="{{ url_for('auth.liste_utilisateurs') }}" class="btn btn-outline-secondary">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

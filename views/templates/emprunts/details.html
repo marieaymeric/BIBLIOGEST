@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titre %}Emprunt #{{ emprunt.id }} — BiblioGest{% endblock %}
+
+{% block contenu %}
+<h2 class="mb-4"><i class="bi bi-arrow-left-right"></i> Détail de l'emprunt</h2>
+
+<div class="card shadow-sm mb-3" style="max-width: 700px;">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"><strong>Livre :</strong> <a href="{{ url_for('livre.details', livre_id=emprunt.livre.id) }}">{{ emprunt.livre.titre }}</a></li>
+        <li class="list-group-item"><strong>Lecteur :</strong> <a href="{{ url_for('lecteur.details', lecteur_id=emprunt.lecteur.id) }}">{{ emprunt.lecteur.nom_complet }}</a></li>
+        <li class="list-group-item"><strong>Enregistré par :</strong> {{ emprunt.utilisateur.nom }}</li>
+        <li class="list-group-item"><strong>Date d'emprunt :</strong> {{ emprunt.date_emprunt.strftime('%d/%m/%Y %H:%M') }}</li>
+        <li class="list-group-item"><strong>Date limite de retour :</strong> {{ emprunt.date_limite.strftime('%d/%m/%Y') }}</li>
+        <li class="list-group-item">
+            <strong>Statut :</strong>
+            {% if emprunt.statut == 'retourne' %}
+                <span class="badge bg-success">Rendu le {{ emprunt.date_retour_effective.strftime('%d/%m/%Y') }}</span>
+            {% elif emprunt.est_en_retard %}
+                <span class="badge bg-danger">En retard</span>
+            {% else %}
+                <span class="badge bg-info text-dark">En cours</span>
+            {% endif %}
+        </li>
+        {% if emprunt.penalite %}
+        <li class="list-group-item">
+            <strong>Pénalité :</strong>
+            {{ "%.2f"|format(emprunt.penalite.montant) }}
+            ({{ emprunt.penalite.jours_de_retard }} jour(s) de retard) —
+            {% if emprunt.penalite.statut_paiement == 'payee' %}
+                <span class="badge bg-success">Payée</span>
+            {% else %}
+                <span class="badge bg-warning text-dark">Impayée</span>
+            {% endif %}
+        </li>
+        {% endif %}
+    </ul>
+    {% if emprunt.statut != 'retourne' %}
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('emprunt.retour', emprunt_id=emprunt.id) }}" onsubmit="return confirm('Confirmer le retour de ce livre ?');">
+            <button type="submit" class="btn btn-success"><i class="bi bi-box-arrow-in-left"></i> Enregistrer le retour</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<a href="{{ url_for('emprunt.liste') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Retour à la liste</a>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block titre %}Tableau de bord — BiblioGest{% endblock %}
+
+{% block contenu %}
+<h2 class="mb-4"><i class="bi bi-speedometer2"></i> Tableau de bord</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-bg-primary shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fs-6">Livres au catalogue</div>
+                        <div class="fs-2 fw-bold">{{ nb_livres }}</div>
+                    </div>
+                    <i class="bi bi-journal-bookmark fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-success shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fs-6">Lecteurs inscrits</div>
+                        <div class="fs-2 fw-bold">{{ nb_lecteurs }}</div>
+                    </div>
+                    <i class="bi bi-people fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-info shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fs-6">Emprunts en cours</div>
+                        <div class="fs-2 fw-bold">{{ nb_emprunts_en_cours }}</div>
+                    </div>
+                    <i class="bi bi-arrow-left-right fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-warning shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fs-6">Retards en cours</div>
+                        <div class="fs-2 fw-bold">{{ nb_retards }}</div>
+                    </div>
+                    <i class="bi bi-exclamation-triangle fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <i class="bi bi-clock-history"></i> Derniers emprunts enregistrés
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Livre</th>
+                            <th>Lecteur</th>
+                            <th>Date d'emprunt</th>
+                            <th>Date limite</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for emprunt in derniers_emprunts %}
+                        <tr>
+                            <td>{{ emprunt.livre.titre }}</td>
+                            <td>{{ emprunt.lecteur.nom_complet }}</td>
+                            <td>{{ emprunt.date_emprunt.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ emprunt.date_limite.strftime('%d/%m/%Y') }}</td>
+                            <td>
+                                {% if emprunt.statut == 'retourne' %}
+                                    <span class="badge bg-success">Rendu</span>
+                                {% elif emprunt.est_en_retard %}
+                                    <span class="badge bg-danger">En retard</span>
+                                {% else %}
+                                    <span class="badge bg-info text-dark">En cours</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="5" class="text-center text-muted py-3">Aucun emprunt enregistré pour le moment.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

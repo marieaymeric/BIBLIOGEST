@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titre %}{{ 'Modifier' if lecteur else 'Inscrire' }} un lecteur — BiblioGest{% endblock %}
+
+{% block contenu %}
+<h2 class="mb-4">
+    <i class="bi bi-person-plus"></i>
+    {{ 'Modifier le lecteur' if lecteur else 'Inscrire un nouveau lecteur' }}
+</h2>
+
+<div class="card shadow-sm" style="max-width: 700px;">
+    <div class="card-body">
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Nom *</label>
+                    <input type="text" name="nom" class="form-control" required value="{{ lecteur.nom if lecteur else '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Prénom *</label>
+                    <input type="text" name="prenom" class="form-control" required value="{{ lecteur.prenom if lecteur else '' }}">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">E-mail</label>
+                <input type="email" name="email" class="form-control" value="{{ lecteur.email if lecteur and lecteur.email else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Téléphone</label>
+                <input type="text" name="telephone" class="form-control" value="{{ lecteur.telephone if lecteur and lecteur.telephone else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Adresse</label>
+                <textarea name="adresse" class="form-control" rows="2">{{ lecteur.adresse if lecteur and lecteur.adresse else '' }}</textarea>
+            </div>
+            {% if lecteur %}
+            <div class="form-check mb-3">
+                <input type="checkbox" name="actif" class="form-check-input" id="actif" {% if lecteur.actif %}checked{% endif %}>
+                <label class="form-check-label" for="actif">Compte actif</label>
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Enregistrer</button>
+            <a href="{{ url_for('lecteur.liste') }}" class="btn btn-outline-secondary">Annuler</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

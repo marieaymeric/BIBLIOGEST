@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block titre %}Catégories — BiblioGest{% endblock %}
+
+{% block contenu %}
+<h2 class="mb-4"><i class="bi bi-tags"></i> Catégories de livres</h2>
+
+<div class="row g-3">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">Ajouter une catégorie</div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('livre.ajouter_categorie') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Nom *</label>
+                        <input type="text" name="nom" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="2"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Ajouter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="table-responsive">
+                <table class="table mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr><th>Nom</th><th>Nb. livres</th><th class="text-end">Actions</th></tr>
+                    </thead>
+                    <tbody>
+                    {% for cat in categories %}
+                        <tr>
+                            <td>{{ cat.nom }}</td>
+                            <td>{{ cat.livres|length }}</td>
+                            <td class="text-end">
+                                <form method="POST" action="{{ url_for('livre.supprimer_categorie', categorie_id=cat.id) }}" class="d-inline" onsubmit="return confirm('Supprimer cette catégorie ?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="3" class="text-center text-muted py-3">Aucune catégorie.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

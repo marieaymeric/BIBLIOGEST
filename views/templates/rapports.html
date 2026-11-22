@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block titre %}Rapports — BiblioGest{% endblock %}
+
+{% block contenu %}
+<h2 class="mb-4"><i class="bi bi-bar-chart-line"></i> Rapports et statistiques</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">Livres les plus empruntés</div>
+            <ul class="list-group list-group-flush">
+                {% for livre, nb in livres_plus_empruntes %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        {{ livre.titre }} <span class="badge bg-primary rounded-pill">{{ nb }}</span>
+                    </li>
+                {% else %}
+                    <li class="list-group-item text-muted">Aucune donnée disponible.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">Lecteurs les plus actifs</div>
+            <ul class="list-group list-group-flush">
+                {% for lecteur, nb in lecteurs_plus_actifs %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        {{ lecteur.nom_complet }} <span class="badge bg-primary rounded-pill">{{ nb }}</span>
+                    </li>
+                {% else %}
+                    <li class="list-group-item text-muted">Aucune donnée disponible.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card text-bg-warning shadow-sm">
+            <div class="card-body">
+                <div class="fs-6">Total des pénalités enregistrées</div>
+                <div class="fs-3 fw-bold">{{ "%.2f"|format(total_penalites) }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-bg-danger shadow-sm">
+            <div class="card-body">
+                <div class="fs-6">Montant total impayé</div>
+                <div class="fs-3 fw-bold">{{ "%.2f"|format(total_impaye) }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white">Historique des 50 derniers emprunts</div>
+    <div class="table-responsive">
+        <table class="table mb-0">
+            <thead class="table-light">
+                <tr><th>Livre</th><th>Lecteur</th><th>Date d'emprunt</th><th>Statut</th></tr>
+            </thead>
+            <tbody>
+            {% for emprunt in historique_emprunts %}
+                <tr>
+                    <td>{{ emprunt.livre.titre }}</td>
+                    <td>{{ emprunt.lecteur.nom_complet }}</td>
+                    <td>{{ emprunt.date_emprunt.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        {% if emprunt.statut == 'retourne' %}<span class="badge bg-success">Rendu</span>
+                        {% elif emprunt.est_en_retard %}<span class="badge bg-danger">En retard</span>
+                        {% else %}<span class="badge bg-info text-dark">En cours</span>{% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="text-center text-muted py-3">Aucun emprunt enregistré.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

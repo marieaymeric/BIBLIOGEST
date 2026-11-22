@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block titre %}{{ lecteur.nom_complet }} — BiblioGest{% endblock %}
+
+{% block contenu %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2>{{ lecteur.nom_complet }}</h2>
+        <p class="text-muted mb-0">Inscrit le {{ lecteur.date_inscription.strftime('%d/%m/%Y') }}</p>
+    </div>
+    <div>
+        <a href="{{ url_for('lecteur.modifier', lecteur_id=lecteur.id) }}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Modifier</a>
+        {% if lecteur.actif %}
+        <form method="POST" action="{{ url_for('lecteur.desactiver', lecteur_id=lecteur.id) }}" class="d-inline" onsubmit="return confirm('Désactiver ce lecteur ?');">
+            <button type="submit" class="btn btn-outline-warning"><i class="bi bi-person-dash"></i> Désactiver</button>
+        </form>
+        {% endif %}
+        <form method="POST" action="{{ url_for('lecteur.supprimer', lecteur_id=lecteur.id) }}" class="d-inline" onsubmit="return confirm('Confirmer la suppression de ce lecteur ?');">
+            <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Supprimer</button>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-header bg-white">Coordonnées</div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"><strong>E-mail :</strong> {{ lecteur.email or '—' }}</li>
+        <li class="list-group-item"><strong>Téléphone :</strong> {{ lecteur.telephone or '—' }}</li>
+        <li class="list-group-item"><strong>Adresse :</strong> {{ lecteur.adresse or '—' }}</li>
+        <li class="list-group-item">
+            <strong>Statut :</strong>
+            {% if lecteur.actif %}<span class="badge bg-success">Actif</span>{% else %}<span class="badge bg-secondary">Désactivé</span>{% endif %}
+        </li>
+    </ul>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-white">Historique des emprunts</div>
+    <div class="table-responsive">
+        <table class="table mb-0">
+            <thead class="table-light">
+                <tr><th>Livre</th><th>Date d'emprunt</th><th>Date limite</th><th>Statut</th></tr>
+            </thead>
+            <tbody>
+            {% for emprunt in emprunts %}
+                <tr>
+                    <td>{{ emprunt.livre.titre }}</td>
+                    <td>{{ emprunt.date_emprunt.strftime('%d/%m/%Y') }}</td>
+                    <td>{{ emprunt.date_limite.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        {% if emprunt.statut == 'retourne' %}<span class="badge bg-success">Rendu</span>
+                        {% elif emprunt.est_en_retard %}<span class="badge bg-danger">En retard</span>
+                        {% else %}<span class="badge bg-info text-dark">En cours</span>{% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="text-center text-muted py-3">Aucun emprunt enregistré.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
